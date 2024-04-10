@@ -46,28 +46,51 @@ export default function Form() {
   return (
 
     <>
-        <h1 style={{textAlign:"center"}}>Employee profile form</h1>
-        <form className='formBox'>   
+        <h1 style={{textAlign:"center"}} className="text-body-secondary">Employee profile form</h1>
+        <br></br>
+        <form >   
+                 <div className="row">
+                    <label htmlFor="name" className="col-sm-1 col-form-label">Name:</label>
+                    <div className="col-sm-4"> 
+                      <input id="name"  type="text" className="form-control" onChange={(e)=>{setName(e.target.value)}} />
+                    </div>
+                  </div>         
+               
+                  <br></br>
 
-                <label htmlFor="name">Name:</label>
-                 <input id="name"  type='text' onChange={(e)=>{setName(e.target.value)}} />
+             
+                <div className="row">
+                   <label htmlFor="empId" className="col-sm-1 col-form-label" >EmpId:</label>
+                   <div className="col-sm-4">
+                      <input id="empId" type="text" className="form-control" onChange={(e)=>{setempId(e.target.value)}} />
+                   </div>
+                </div>
+                
+                <br></br>
+                 
+
+                  <div className='row'>
+                    <label className="col-sm-1 col-form-label" htmlFor="email">Email:</label>
+                    <div className="col-sm-4">
+                      <input id="email" className='form-control' type='email' onChange={(e)=>{setEmail(e.target.value)}}/>
+                    </div>
+                  </div>
+                 
+                 <br></br>
+                <br></br>
+
+                  <div className="col-sm-3 ms-3" >
+                     <input className="form-control"  type='file' accept='images/*' onChange={(e)=>{setImage(e.target.files[0])}} />
+                  </div>
+
                  <br></br>
 
-                <label htmlFor="empId">EmpId:</label>
-                 <input id="empId" type='text'  onChange={(e)=>{setempId(e.target.value)}} />
-                    <br></br>
-
-                 <label htmlFor="email">Email:</label>
-                 <input id="email" type='email' onChange={(e)=>{setEmail(e.target.value)}}/>
-                 <br></br>
-
-                 <input style={{margin:"auto"}} type='file' accept='images/*' onChange={(e)=>{setImage(e.target.files[0])}} />
-                 <br></br>
-                 <button type="button" onClick={uploadImage} >Upload Image</button>
-                 <button onClick={Submit} > Upload Data</button>
+                 <button className="btn btn-primary col-sm-1" style={{margin:"5px", borderRadius:"10px"}} type="button" onClick={uploadImage} >Upload Image</button>
+                 <button className="btn btn-primary col-sm-1" style={{margin:"5px", borderRadius:"10px"}} onClick={Submit} > Upload Data</button>
                  
         </form>
-        <button className="btn" onClick={()=>{navigate("/")}}>Go Home</button>
+        <br></br>
+        <button className="btn btn-primary" style={{margin:"5px", borderRadius:"10px", textAlign:"center"}}  onClick={()=>{navigate("/")}}>Go Home</button>
     </>
   )
 }

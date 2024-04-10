@@ -38,43 +38,50 @@ export default function Home() {
     fetchData()
   }
   const navigate = useNavigate();
+
+ 
   return (
     <div>
-     <h1 style={{textAlign:"center"}}>Employee Table Data</h1>
-        <table>
+     <h1 style={{textAlign:'center'}} className="text-body-secondary">Employee Table Data</h1>
+        <table className='table table-hover'>
     <thead>
-      <tr>
-      <th>Emp Id</th>
-      <th>Emp Name</th>
-      <th>Email</th>
-      <th> Profile Picture</th>
-      <th> Update/Delete</th>
+      <tr >
+      <th scope='col'>Emp Id</th>
+      <th scope="col">Emp Name</th>
+      <th scope="col">Email</th>
+      <th scope="col"> Profile Picture</th>
+      <th scope="col"> Update/Delete</th>
       </tr>
     
     </thead>
-    <tbody>
+    <tbody >
       {employess.map((emp,key) => {
         return (
-          <tr key={key}>
-            <td>{emp.empId}</td>
+          <tr className='table-primary' key={key}>
+            <th scope='row'>{emp.empId}</th>
             <td>{emp.name}</td>
             <td>{emp.email}</td>
             <td>
               <img
+                style={{
+                  width:"80px",
+                  height:"80px",
+                  "border-radius": "50%"
+                }}
                 src={emp.photoUrl}
                 alt="Emp"
                 
               ></img>
             </td>
             <td>
-              <button onClick={()=>{handleUpdate(emp._id)}}>Update</button>
-              <button onClick={()=>{handleDelete(emp._id)}}>Delete</button>
+              <button  type='button' className='btn btn-secondary' style={{margin:"5px", borderRadius:"10px"}} onClick={()=>{handleUpdate(emp._id)}}>Update</button>
+              <button type='button' className="btn btn-secondary" style={{margin:"5px", borderRadius:"10px"}} onClick={()=>{handleDelete(emp._id)}}>Delete</button>
             </td>
           </tr>
         );
       })}
     </tbody>
   </table>
-  <button className="btn" onClick={()=>{navigate("form")}}>Add profile</button></div>
+  <button type='button'  className="btn btn-secondary  m-5" style={{ borderRadius:"10px"}} onClick={()=>{navigate("form")}}>Add profile</button></div>
   )
 }

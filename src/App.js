@@ -3,8 +3,10 @@ import Home from "./Pages/Home";
 import UpdateForm from "./Pages/UpdateForm";
 import {Routes, Route} from "react-router-dom";
 import Form from "./Pages/Form";
-import "./Styles/form.css"
-import "./Styles/home.css"
+
+// import "./Styles/form.css"
+// import "./Styles/home.css"
+import 'bootswatch/dist/flatly/bootstrap.min.css';
 
 export default function App() {
     

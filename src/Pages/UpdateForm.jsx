@@ -64,27 +64,48 @@ export default function UpdateForm() {
   return (
 
     <>
-        <h1 style={{textAlign:"center"}}>Update Details Form</h1>
-        <form className='formBox'>   
+        <h1 style={{textAlign:"center"}} className="text-body-secondary" >Update Details Form</h1>
+        <br></br>
+        <br></br>
+        <form>   
+                <div className="row">
+                  <label className="col-sm-1 col-form-label" htmlFor="name">Name:</label>
+                  <div className="col-sm-4">
+                    <input id="name" name="name" className="form-control" type='text' value={employee.name} onChange={handleInputChange} />
+                  </div>
+                 </div>
+                 
+                 <br></br>
+               
+                <div className="row">
+                  <label className="col-sm-1 col-form-label" htmlFor="empId">EmpId:</label>
+                  <div className="col-sm-4">
+                    <input id="empId" name="empId" className="form-control" type='text' value={employee.empId} onChange={handleInputChange} />
+                  </div>
+                </div>
 
-                <label htmlFor="name">Name:</label>
-                 <input id="name" name="name"  type='text' value={employee.name} onChange={handleInputChange} />
+                <br></br>
+                
+                <div className="row">
+                  <label className="col-sm-1 col-form-label" htmlFor="email">Email:</label>
+                  <div className="col-sm-4">
+                      <input id="email" className="form-control" name="email" type='email' value={employee.email} onChange={handleInputChange}/>
+
+                  </div>
+                </div>
+
+                <br></br>
+
+                <div className="col-sm-3 ms-3">
+                  <input className="form-control"  style={{margin:"auto"}} type='file'  accept='images/*' onChange={handleImageChange} />
+                </div>
+
                  <br></br>
 
-                <label htmlFor="empId">EmpId:</label>
-                 <input id="empId" name="empId" type='text' value={employee.empId} onChange={handleInputChange} />
-                    <br></br>
-
-                 <label htmlFor="email">Email:</label>
-                 <input id="email" name="email" type='email' value={employee.email} onChange={handleInputChange}/>
-                 <br></br>
-
-                 <input style={{margin:"auto"}} type='file'  accept='images/*' onChange={handleImageChange} />
-                 <br></br>
-                 <button type="button" onClick={uploadImage} >Upload Image</button>
-                 <button onClick={Submit} > Upload Data</button>
+                 <button className="btn btn-primary col-sm-1" style={{margin:"5px", borderRadius:"10px"}} type="button" onClick={uploadImage} >Upload Image</button>
+                 <button className="btn btn-primary col-sm-1" style={{margin:"5px", borderRadius:"10px"}} onClick={Submit} > Upload Data</button>
         </form>
-        <button className="btn" onClick={()=>{navigate("/")}}>Go Home</button>
+        <button className="btn btn-primary" style={{margin:"5px", borderRadius:"10px", textAlign:"center"}} onClick={()=>{navigate("/")}}>Go Home</button>
     </>
   )
 }
