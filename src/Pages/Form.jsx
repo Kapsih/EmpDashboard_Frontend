@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useMediaQuery } from 'react-responsive';
+
 export default function UpdateForm() {
   const {user} = useAuthContext()
-  
+  const isMobileScreen = useMediaQuery({
+    query: '(max-width: 830px)'
+  })
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
@@ -61,25 +65,25 @@ export default function UpdateForm() {
   return (
     <>
       <div  style={{display:"flex",flexDirection:"column" }}>
-        <h1 style={{ display: "flex", justifyContent: "center", marginTop:"3%" }} className="text-body-secondary">Add Employee Form</h1>
-        <form style={{display:"flex",   justifyContent:"center", flexDirection:"column", marginTop:"3%" }}>
+        <h1 style={{ display: "flex", justifyContent: "center", marginTop:isMobileScreen?("12%"):("3.5%") }} className="text-body-secondary">Employee Information Form</h1>
+        <form style={{display:"flex",   justifyContent:"center", flexDirection:"column", marginTop:isMobileScreen?("6%"):("4%") }}>
          
           <div className="row" style={{display:"flex",   justifyContent:"center"}}>
-              <label className="col-sm-1 col-form-label" htmlFor="name">
+              <label className="col-lg-1 col-form-label" htmlFor="name">
                  Name:
                 </label>
-              <div className="col-sm-3">
+              <div className="col-lg-3">
                  <input id="name" name="name" className="form-control" type="text"  value={employee.name} onChange={handleInputChange} />
               </div>
           </div>
 
-          <br></br>
+          
 
-          <div  className="row" style={{display:"flex",   justifyContent:"center"}}>
-            <label className="col-sm-1 col-form-label" htmlFor="email">
+          <div  className="row" style={{display:"flex",   justifyContent:"center", marginTop:"2%"}}>
+            <label className="col-lg-1 col-form-label" htmlFor="email">
               Email:
             </label>
-            <div className="col-sm-3">
+            <div className="col-lg-3">
               <input
                 id="email"
                 className="form-control"
@@ -91,12 +95,12 @@ export default function UpdateForm() {
 
           </div>
          
-          <br></br>
-          <div className="row" style={{display:"flex",   justifyContent:"center"}}>
-              <label className="col-sm-1 col-form-label" htmlFor="Password">
+        
+          <div className="row" style={{display:"flex",   justifyContent:"center",  marginTop:"2%"}}>
+              <label className="col-lg-1 col-form-label" htmlFor="Password">
                 Password
               </label>
-              <div className="col-sm-3">
+              <div className="col-lg-3">
                 <input
                 id="Password"
                   type="password"
@@ -109,17 +113,18 @@ export default function UpdateForm() {
 
           <div
               className="row"
-              style={{ display: "flex", justifyContent: "center", width:"25%", margin:"2% auto" }}
+              style={{ display: "flex", justifyContent: "center", width:isMobileScreen?("70%"):("13%"), margin:isMobileScreen?("10% auto"):("2% auto") }}
             >
               <input className="form-control" type="file"
                 accept="images/*"
+              
                onChange={handleImageChange}
               />
             </div>
 
-            <br></br>
+          
 
-            <button className="btn btn-primary col-sm-1" style={{ display: "flex", justifyContent: "center", width:"25%", margin:"0 auto" }}onClick={Submit}>Save</button>
+            <button className="btn btn-primary col-lg-1" style={{ display: "flex", justifyContent: "center", width:isMobileScreen?("30%"):("20%"), margin:isMobileScreen?("5% auto"):("1% auto") }}onClick={Submit}>Save</button>
         </form>
       </div>
     </>

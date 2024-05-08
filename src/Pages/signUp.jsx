@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useSignUp } from "../hooks/useSignUp";
+import { useMediaQuery } from 'react-responsive';
 export default function SignUp() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name,setName] = useState("")
   const { signUp, error, isLoading } = useSignUp();
+  const isMobileScreen = useMediaQuery({
+    query: '(max-width: 830px)'
+  })
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -13,14 +17,14 @@ export default function SignUp() {
   };
   return (
     <div style={{display:"flex",flexDirection:"column" }}>
-        <h1 style={{display:"flex",   justifyContent:"center", marginTop:"5%"}} className="text-body-secondary">Sign-up</h1>
+        <h1 style={{display:"flex",   justifyContent:"center", marginTop: isMobileScreen?("14%"):("5%")}} className="text-body-secondary">Sign-up</h1>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <form
           style={{
             display: "flex",
             justifyContent: "center",
             flexDirection: "column",
-            marginTop: "3%",
+            marginTop: isMobileScreen?("8%"):("3%"),
           }}
         >
         
@@ -75,11 +79,12 @@ export default function SignUp() {
             </div>
         
         </form>
-        <div style={{ display:"flex", marginTop:"3%", justifyContent:"center", }}>
+        <div style={{ display:"flex", marginTop:isMobileScreen?("16%"):("3%"), justifyContent:"center", }}>
            <button
              disabled={isLoading}
              className="btn btn-primary"
               onClick={handleRegister}
+              style={{width:isMobileScreen?("45vw"):("10vw")}}
            >
           Sign-up
         </button>

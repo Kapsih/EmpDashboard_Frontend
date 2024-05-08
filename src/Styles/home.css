@@ -1,13 +1,13 @@
 .swipeable-list-item__leading-actions{
 
-    background-color: orange;
+    background-color:   #F7C331;
     height:18vh;
     border-radius: 9.5%;
     font-style: bold;
 }
 
 .swipeable-list-item__trailing-actions {
-  background-color: red;
+  background-color:  #eb1736;
   height:18vh;
   border-radius: 9.5%;
   text-align: center;

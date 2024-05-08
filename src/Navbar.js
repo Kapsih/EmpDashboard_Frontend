@@ -1,7 +1,7 @@
 import React from "react";
 import { useLogout } from "./hooks/useLogout";
 import { useAuthContext } from "./hooks/useAuthContext";
-
+import { useMediaQuery } from 'react-responsive';
 
 export default function Navbar() {
   const {logout} = useLogout()
@@ -12,23 +12,13 @@ export default function Navbar() {
     logout()
   };
   return (
-    <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <nav className="navbar navbar-expand bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
         
             <a className="navbar-brand" href="/home">
               EMP Dashboard
             </a>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarColor01"
-              aria-controls="navbarColor01"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+            
         
             
              

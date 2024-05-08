@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useMediaQuery } from 'react-responsive'
+import { useMediaQuery } from 'react-responsive';
 import {
   LeadingActions,
   SwipeableList,
@@ -93,9 +93,9 @@ const trailingActions = (empId) => (
       trailingActions={trailingActions(emp._id)}
     >
       
-   <div className='card text-white bg-primary mb-2' style={{display:"flex", flexDirection:"column", boxShadow:"10px 10px", width:"100vw" }}>
+   <div className='card text-white bg-primary mb-2' style={{display:"flex", flexDirection:"column", boxShadow:"10px 10px", width:"100vw", height:"18vh" }}>
         <div className='card-body' style={{display:"flex"}}>
-          <img src={emp.photoUrl} style={{width:"30%", height:"30%", borderRadius:"50%", marginRight:"5%"}}/>
+          <img src={emp.photoUrl} style={{width:"30%", height:"85%", borderRadius:"50%", marginRight:"5%"}}/>
           <div className='text' style={{display:"flex", flexDirection:"column"}}> 
             <span style={{fontSize:"2.5vh",fontWeight:"100", marginBottom:"5%"}}>{emp.name}</span>
             <span style={{fontSize:"2vh", fontWeight:"100"}}>{emp.email}</span>
@@ -111,7 +111,7 @@ const trailingActions = (empId) => (
 </SwipeableList>
 </div>):
 (
-<table className='table table-hover'>
+<table className='table table-hover' style={{width:"99vw", margin:"auto", marginTop:"1%"}}>
 <thead>
   <tr >
   <th scope="col">Emp Name</th>
