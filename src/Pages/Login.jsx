@@ -25,7 +25,7 @@ export default function Login() {
       <div >
         
         <div style={{display:"flex",flexDirection:"column" }} >
-        <h1 style={{display:"flex",   justifyContent:"center", marginTop: isMobileScreen?("14%"):("3%")}} className="text-body-secondary"> Login</h1>
+        <h1 style={{display:"flex",   justifyContent:"center", marginTop: isMobileScreen?("14%"):("5%")}} className="text-body-secondary"> Login</h1>
           <form  style={{display:"flex",   justifyContent:"center", flexDirection:"column", marginTop: isMobileScreen?("8%"):("4%") }} >
             <div className="row " style={{display:"flex",   justifyContent:"center"}}>
               <label className="col-sm-1 col-form-label" htmlFor="Email" style={{marginRight:isMobileScreen?("0px"):"10px"}}>
