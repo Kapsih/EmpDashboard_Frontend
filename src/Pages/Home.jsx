@@ -12,13 +12,18 @@ import {
 } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import "../Styles/home.css";
-
+import deleteIcon from "../resources/icons/bin.png"
 export default function Home() {
   const [empData, setEmpData] = useState({ emps: [] });
   const { user } = useAuthContext();
   const isMobileScreen = useMediaQuery({
-    query: "(max-width: 830px)",
+    query: "(max-width: 768px)",
   });
+
+  const isLandscape = useMediaQuery({
+    query: "(orientation: landscape)",
+  });
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:5000/emp-data", {
@@ -73,10 +78,10 @@ export default function Home() {
     <div>
       <div style={{display:"flex", flexDirection:"column"}}>
         <h1
-          style={{ textAlign: "center", marginTop: "1.5%" }}
+          style={{ textAlign: "center", marginTop: "2.5%" }}
           className="text-body-secondary"
         >
-          Employee Table Data
+         {isMobileScreen?"Employee Data": "Employee Table Data"}
         </h1>
 
         {isMobileScreen ? (
@@ -86,7 +91,7 @@ export default function Home() {
               flexDirection: "column",
               justifyContent: "center",
               width: "100vw",
-              marginTop: "4%",
+              marginTop: "4.8%",
             }}
           >
             <SwipeableList
@@ -104,6 +109,7 @@ export default function Home() {
                     key={key}
                     leadingActions={leadingActions(emp._id)}
                     trailingActions={trailingActions(emp._id)}
+                
                   >
                     <div
                       className="card text-white bg-primary mb-2"
@@ -112,15 +118,15 @@ export default function Home() {
                         flexDirection: "column",
                         boxShadow: "10px 10px",
                         width: "100vw",
-                        height: "18vh",
+                        height: isLandscape?("25vh"):("15vh"),
                       }}
                     >
                       <div className="card-body" style={{ display: "flex" }}>
                         <img
                           src={emp.photoUrl}
                           style={{
-                            width: "30%",
-                            height: "85%",
+                            width: isLandscape?("12vw"):("20vw"),
+                            height: isLandscape?("15vh"):("10vh"),
                             borderRadius: "50%",
                             marginRight: "5%",
                           }}
@@ -131,14 +137,14 @@ export default function Home() {
                         >
                           <span
                             style={{
-                              fontSize: "2.5vh",
+                              fontSize:  isLandscape?("4.5vh"):("2.4vh"),
                               fontWeight: "100",
                               marginBottom: "5%",
                             }}
                           >
                             {emp.name}
                           </span>
-                          <span style={{ fontSize: "2vh", fontWeight: "100" }}>
+                          <span style={{ fontSize: isLandscape?("4.0vh"):("2.0vh"), fontWeight: "100" }}>
                             {emp.email}
                           </span>
                         </div>
@@ -152,7 +158,7 @@ export default function Home() {
         ) : (
           <table
             className="table table-hover"
-            style={{ width: "99vw", margin: "auto", marginTop: "1.5%" }}
+            style={{ width: "75vw", margin: "auto", marginTop: "1.5%" }}
           >
             <thead>
               <tr>
@@ -198,7 +204,7 @@ export default function Home() {
                           handleDelete(emp._id);
                         }}
                       >
-                        🗑
+                        <img style={{width:"15px", height:"15px"}}src={deleteIcon}></img>
                       </button>
                     </td>
                   </tr>

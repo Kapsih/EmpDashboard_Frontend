@@ -5,6 +5,8 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 
+
+
 export default function UpdateForm() {
   const fileRef = useRef(null);
   const { user } = useAuthContext();
@@ -40,7 +42,7 @@ export default function UpdateForm() {
     const formData = new FormData();
     formData.append("file", img);
     formData.append("upload_preset", "ngsvh7oj");
-    console.log(formData);
+    
     await axios
       .post("https://api.cloudinary.com/v1_1/dc4ypjcrp/image/upload", formData)
       .then((res) => {
@@ -54,8 +56,10 @@ export default function UpdateForm() {
       });
   };
 
+
   const Submit = async (e) => {
     e.preventDefault();
+
 
     axios
       .patch(`http://localhost:5000/emp-data/${id}`, employee, {
@@ -64,7 +68,7 @@ export default function UpdateForm() {
       .then((response) => console.log(response))
       .catch((response) => console.log(response));
     navigate("/home");
-  };
+   };
 
   const loadEmpDetails = async () => {
     const result = await axios.get(`http://localhost:5000/emp-data/${id}`, {

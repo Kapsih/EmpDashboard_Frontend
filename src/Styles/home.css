@@ -1,18 +1,46 @@
-.swipeable-list-item__leading-actions{
+@media (orientation: landscape){
+  .swipeable-list-item__leading-actions{
 
     background-color:   #F7C331;
-    height:18vh;
+    height:25vh;
     border-radius: 9.5%;
     font-style: bold;
 }
 
 .swipeable-list-item__trailing-actions {
   background-color:  #eb1736;
-  height:18vh;
+  height:25vh;
   border-radius: 9.5%;
   text-align: center;
   font-style: bold;
 }
+
+  
+}
+
+@media (orientation: portrait ){
+  .swipeable-list-item__leading-actions{
+
+    background-color:   #F7C331;
+    height:15vh;
+    border-radius: 9.5%;
+    font-style: bold;
+}
+
+.swipeable-list-item__trailing-actions {
+  background-color:  #eb1736;
+  height:15vh;
+  border-radius: 9.5%;
+  text-align: center;
+  font-style: bold;
+}
+
+  
+}
+
+
+
+
 
 .swipe-action{
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -21,3 +49,4 @@
   justify-content: center;
   color: white;
 }
+
