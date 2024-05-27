@@ -3,19 +3,32 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useMediaQuery } from "react-responsive";
+import { Icon } from "react-icons-kit"
+import {ic_delete} from 'react-icons-kit/md/ic_delete';
+import {ic_search} from 'react-icons-kit/md/ic_search';
+import {ic_mode_edit} from 'react-icons-kit/md/ic_mode_edit';
+import {ic_person_add} from 'react-icons-kit/md/ic_person_add'
+
 import {
   LeadingActions,
   SwipeableList,
   SwipeableListItem,
   SwipeAction,
   TrailingActions,
+  Type as ListType
 } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import "../Styles/home.css";
-import deleteIcon from "../resources/icons/bin.png"
+import DeleteModal from "../DeleteModal";
+
 export default function Home() {
   const [empData, setEmpData] = useState({ emps: [] });
   const { user } = useAuthContext();
+  const [searchTerm, setSearchTerm] = useState("");
+  // const [doDelete, setDoDelete]  = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
   });
@@ -45,21 +58,28 @@ export default function Home() {
     navigate(`/updateForm/${empDbId}`);
   };
 
-  const handleDelete = (empDbId) => {
-    axios
-      .delete(`http://localhost:5000/emp-data/${empDbId}`, {
-        headers: { Authorization: "Bearer " + user.token },
-      })
-      .then((response) => {
-        alert(`User: ${response.data.emp.name} -- has been deleted`);
-      })
-      .catch((error) => {
-        alert(`error: ${error}`);
-      });
-    window.location.reload();
+
+  const handleDelete = async(empDbId) => {
+  
+    
+   
+    // if(doDelete){
+    //   axios
+    //   .delete(`http://localhost:5000/emp-data/${empDbId}`, {
+    //     headers: { Authorization: "Bearer " + user.token },
+    //   })
+    //   .then((response) => {
+    //     alert(`User: ${response.data.emp.name} -- has been deleted`);
+    //   })
+    //   .catch((error) => {
+    //     alert(`error: ${error}`);
+    //   });
+    // window.location.reload();
+    // }
+    
   };
   const navigate = useNavigate();
-
+ 
   const leadingActions = (empId) => (
     <LeadingActions>
       <SwipeAction onClick={() => handleUpdate(empId)}>Update</SwipeAction>
@@ -74,16 +94,27 @@ export default function Home() {
     </TrailingActions>
   );
 
-  return (
-    <div>
-      <div style={{display:"flex", flexDirection:"column"}}>
-        <h1
-          style={{ textAlign: "center", marginTop: "2.5%" }}
-          className="text-body-secondary"
-        >
-         {isMobileScreen?"Employee Data": "Employee Table Data"}
-        </h1>
+  const handleBlogReq = (empId) =>{
+    navigate(`/Blogs/${empId}`)
+  }
 
+  return (
+    
+    <div>
+  
+ 
+      <div style={{display:"flex", flexDirection:"column"}}>
+      {showDeleteModal && <DeleteModal setShowDeleteModal handleDelete empId />}
+
+      <div style={{margin:"2% auto"}}>
+        <div className="input-group m-2" style={{width: isMobileScreen?("75vw"):("35vw"), height: isMobileScreen?("2.0vh"):("")}}>
+      <input type="text" className="form-control" placeholder="Search Employee" value={searchTerm} onChange={(e)=>{setSearchTerm(e.target.value)}}aria-label="employee search bar" aria-describedby="button-addon2"/>
+      <button className="btn btn-secondary" type="button" id="button-addon2" ><Icon icon={ic_search}/></button>
+    </div>
+      {}
+    </div>
+    
+        
         {isMobileScreen ? (
           <div
             style={{
@@ -91,10 +122,11 @@ export default function Home() {
               flexDirection: "column",
               justifyContent: "center",
               width: "100vw",
-              marginTop: "4.8%",
+              marginTop: "10%",
             }}
           >
             <SwipeableList
+              type={ListType.IOS}
               style={{
                 width: "100vw",
                 display: "flex",
@@ -102,7 +134,14 @@ export default function Home() {
                 margin: "auto",
               }}
             >
-              {employees.map((emp, key) => {
+              {employees.filter((emp)=>{
+                if(searchTerm===""){
+                  return emp
+                }
+                else if(emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ){
+                  return emp
+                }
+              }).map((emp, key) => {
                 return (
                   <SwipeableListItem
                     type={""}
@@ -112,23 +151,24 @@ export default function Home() {
                 
                   >
                     <div
-                      className="card text-white bg-primary mb-2"
+                      className="card text-white bg-primary mb-1"
                       style={{
                         display: "flex",
                         flexDirection: "column",
                         boxShadow: "10px 10px",
                         width: "100vw",
-                        height: isLandscape?("25vh"):("15vh"),
+                        height: isLandscape?("18vh"):("8vh"),
                       }}
                     >
                       <div className="card-body" style={{ display: "flex" }}>
                         <img
                           src={emp.photoUrl}
+                          alt="Employee photo"
                           style={{
-                            width: isLandscape?("12vw"):("20vw"),
-                            height: isLandscape?("15vh"):("10vh"),
+                            width: isLandscape?("12vw"):("12vw"),
+                            height: isLandscape?("15vh"):("5vh"),
                             borderRadius: "50%",
-                            marginRight: "5%",
+                            marginRight: "8%",
                           }}
                         />
                         <div
@@ -137,14 +177,14 @@ export default function Home() {
                         >
                           <span
                             style={{
-                              fontSize:  isLandscape?("4.5vh"):("2.4vh"),
+                              fontSize:  isLandscape?("4.5vh"):("1.6vh"),
                               fontWeight: "100",
-                              marginBottom: "5%",
+                              
                             }}
                           >
                             {emp.name}
                           </span>
-                          <span style={{ fontSize: isLandscape?("4.0vh"):("2.0vh"), fontWeight: "100" }}>
+                          <span style={{ fontSize: isLandscape?("4.0vh"):("1.5vh"), fontWeight: "100" }}>
                             {emp.email}
                           </span>
                         </div>
@@ -158,7 +198,7 @@ export default function Home() {
         ) : (
           <table
             className="table table-hover"
-            style={{ width: "75vw", margin: "auto", marginTop: "1.5%" }}
+            style={{ width: "95vw", margin: "auto", marginTop: "1.0%" }}
           >
             <thead>
               <tr>
@@ -169,7 +209,15 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {employees.map((emp, key) => {
+              {employees.filter((emp)=>{
+                if(searchTerm === ""){
+                  return emp
+                }else if(emp.name.toLowerCase().includes(searchTerm.toLowerCase())|| emp.email.toLowerCase().includes(searchTerm.toLowerCase())){
+                  return emp
+                }
+                
+        
+              }).map((emp, key) => {
                 return (
                   <tr className="table-primary" key={key}>
                     <td>{emp.name}</td>
@@ -177,8 +225,8 @@ export default function Home() {
                     <td>
                       <img
                         style={{
-                          width: "80px",
-                          height: "80px",
+                          width: "3.0vw",
+                          height: "5.0vh",
                           borderRadius: "50%",
                         }}
                         src={emp.photoUrl}
@@ -188,24 +236,34 @@ export default function Home() {
                     <td>
                       <button
                         type="button"
-                        className="btn btn-info"
+                        className="btn btn-warning"
                         style={{ margin: "5px", borderRadius: "10px" }}
                         onClick={() => {
                           handleUpdate(emp._id);
                         }}
                       >
-                        &#x270E;
+                        <Icon icon={ic_mode_edit}/>
                       </button>
                       <button
                         type="button"
-                        className="btn btn-info"
+                        className="btn btn-danger"
                         style={{ margin: "5px", borderRadius: "10px" }}
                         onClick={() => {
-                          handleDelete(emp._id);
+                          // handleDelete(emp._id);
+                          setShowDeleteModal(true)
+                      
                         }}
                       >
-                        <img style={{width:"15px", height:"15px"}}src={deleteIcon}></img>
+                           <Icon icon={ic_delete}/>
                       </button>
+                   
+                    </td>
+                    <td>
+                        <div style={{display:"flex", alignItems:"center", marginTop: "5px"}}>
+                           <button className="btn btn-dark"onClick={()=>{handleBlogReq(emp._id)}}>Blogs...</button>
+
+                        </div>
+                    
                     </td>
                   </tr>
                 );
@@ -213,18 +271,33 @@ export default function Home() {
             </tbody>
           </table>
         )}
-
-        <button
-          type="button"
-          className="btn btn-secondary "
-          style={{ borderRadius: "10px", margin: isMobileScreen?("2% auto"):("2% auto") , width: isMobileScreen?("35%"):("8%") }}
-          onClick={() => {
-            navigate("/form");
-          }}
-        >
-          Add profile
-        </button>
+      { !isMobileScreen &&
+            <button
+            type="button"
+            className="btn btn-dark "
+            style={{ borderRadius: "10px", margin: isMobileScreen?("2% auto"):("2% auto") }}
+            onClick={() => {
+              navigate("/form");
+            }}
+          >
+            Add Employee
+          </button>
+      }
+       { isMobileScreen &&
+               <button
+               type="button"
+               className="btn btn-dark "
+               style={{ borderRadius: "48%", margin:"8% auto"}}
+               onClick={() => {
+                 navigate("/form");
+               }}
+               >
+               <Icon icon={ic_person_add}/>
+               </button> 
+        }
       </div>
     </div>
   );
 }
+
+

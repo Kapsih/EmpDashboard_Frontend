@@ -1,17 +1,16 @@
 import React from "react";
 import { useLogout } from "./hooks/useLogout";
 import { useAuthContext } from "./hooks/useAuthContext";
-import { useMediaQuery } from 'react-responsive';
+import { useMediaQuery } from "react-responsive";
 
 export default function Navbar() {
-  const {logout} = useLogout()
-  const {user} = useAuthContext()
-  
+  const { logout } = useLogout();
+  const { user } = useAuthContext();
+
   const handleLogout = () => {
-    
-    logout()
+    logout();
   };
-  return (
+  return (  
     <nav className="navbar navbar-expand bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
         
@@ -55,5 +54,6 @@ export default function Navbar() {
           </div>
         
     </nav>
+
   );
 }

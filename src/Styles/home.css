@@ -4,6 +4,9 @@
     background-color:   #F7C331;
     height:25vh;
     border-radius: 9.5%;
+  
+    text-align: center;
+    
     font-style: bold;
 }
 
@@ -22,17 +25,28 @@
   .swipeable-list-item__leading-actions{
 
     background-color:   #F7C331;
-    height:15vh;
+    height:8vh;
     border-radius: 9.5%;
+    text-align: center;
+    padding-right: 5vw;
+    padding-left: 5vw;
+    width:10%;
     font-style: bold;
+    
+    
 }
 
 .swipeable-list-item__trailing-actions {
   background-color:  #eb1736;
-  height:15vh;
+  height:8vh;
   border-radius: 9.5%;
   text-align: center;
+  
+
   font-style: bold;
+  
+  /* padding-left: 5%; */
+   
 }
 
   
@@ -45,8 +59,10 @@
 .swipe-action{
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   font-weight: 500;
+  display: flex;
   align-items: center;
   justify-content: center;
+  
   color: white;
 }
 
