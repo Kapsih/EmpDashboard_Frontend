@@ -7,7 +7,7 @@ export default function Breadcrumbs() {
   const { pathname } = useLocation();
 
   const pathnames = pathname.split("/").filter((x) => x);
-  console.log(pathnames);
+  // console.log(pathnames);
   let breadcrumbsPath = "";
   return (
     <div

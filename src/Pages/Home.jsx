@@ -20,6 +20,7 @@ import {
 import "react-swipeable-list/dist/styles.css";
 import "../Styles/home.css";
 import DeleteModal from "../DeleteModal";
+import { useLogout } from "../hooks/useLogout";
 
 export default function Home() {
   const [empData, setEmpData] = useState({ emps: [] });
@@ -27,7 +28,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   // const [doDelete, setDoDelete]  = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const { logout } = useLogout();
   
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
@@ -44,7 +45,8 @@ export default function Home() {
       });
       setEmpData(response.data);
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      logout()
     }
   };
 
@@ -173,7 +175,7 @@ export default function Home() {
                         />
                         <div
                           className="text"
-                          style={{ display: "flex", flexDirection: "column" }}
+                          style={{ display: "flex", flexDirection: "column", width:"65%" }}
                         >
                           <span
                             style={{
@@ -187,6 +189,9 @@ export default function Home() {
                           <span style={{ fontSize: isLandscape?("4.0vh"):("1.5vh"), fontWeight: "100" }}>
                             {emp.email}
                           </span>
+                        </div>
+                        <div > 
+                          <button className="btn btn-dark" onClick={()=>handleBlogReq(emp._id)}>blogs</button>
                         </div>
                       </div>
                     </div>
@@ -203,9 +208,11 @@ export default function Home() {
             <thead>
               <tr>
                 <th scope="col">Emp Name</th>
-                <th scope="col">Email</th>
                 <th scope="col"> Profile Picture</th>
-                <th scope="col"> Update/Delete</th>
+
+                <th scope="col">Email</th>
+                <th scope="col">Blogs</th>
+                 <th scope="col"> Update/Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -221,7 +228,6 @@ export default function Home() {
                 return (
                   <tr className="table-primary" key={key}>
                     <td>{emp.name}</td>
-                    <td>{emp.email}</td>
                     <td>
                       <img
                         style={{
@@ -232,6 +238,15 @@ export default function Home() {
                         src={emp.photoUrl}
                         alt="Emp"
                       ></img>
+                    </td>
+                    <td>{emp.email}</td>
+                    
+                    <td>
+                        <div style={{display:"flex", alignItems:"center", paddingTop: "5px"}}>
+                           <button className="btn btn-dark"onClick={()=>{handleBlogReq(emp._id)}}>Blogs...</button>
+
+                        </div>
+                    
                     </td>
                     <td>
                       <button
@@ -258,13 +273,7 @@ export default function Home() {
                       </button>
                    
                     </td>
-                    <td>
-                        <div style={{display:"flex", alignItems:"center", marginTop: "5px"}}>
-                           <button className="btn btn-dark"onClick={()=>{handleBlogReq(emp._id)}}>Blogs...</button>
-
-                        </div>
-                    
-                    </td>
+                   
                   </tr>
                 );
               })}

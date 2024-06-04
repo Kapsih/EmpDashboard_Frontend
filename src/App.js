@@ -10,6 +10,8 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import Breadcrumbs from "./Breadcrumbs";
 import { useMediaQuery } from "react-responsive";
 import Blogs from "./Pages/Blogs";
+import CreateBlogs from "./Pages/CreateBlogs";
+import { BlogPost } from "./Pages/BlogPost";
 
 export default function App() {
   const { user } = useAuthContext();
@@ -24,8 +26,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={!user? <Login/>: <Navigate to="/Home"/>} />
         <Route path="/SignUp" element={!user? <SignUp />:<Navigate to="/Home"/>} />
+        <Route path="/CreateBlog" element={user ? <CreateBlogs/>: <Navigate to="/"/>} />
         <Route path="/Blogs/:id" element={user ? <Blogs />:<Navigate to="/"/>} />
-        <Route path="/home" element={user? <Home />:<Navigate to="/"/>} />
+        <Route path="/Blogs/Blog/:id" element={user ? <BlogPost/>:<Navigate to="/"/>}/>
+        <Route path="/Home" element={user? <Home />:<Navigate to="/"/>} />
         <Route path="/UpdateForm/:id" element={user?<UpdateForm />:<Navigate to="/"/>} />
         <Route path="Form" element={ user? <Form />: <Navigate to="/"/>} />
         

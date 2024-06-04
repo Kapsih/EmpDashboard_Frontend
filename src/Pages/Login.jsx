@@ -78,6 +78,7 @@ export default function Login() {
                 <input
                   id="Email"
                   type="text"
+                  value={email}
                   placeholder={isMobileScreen?("Email"):("")}
                   className="form-control"
                   style={{ marginLeft: "0.3rem" }}
@@ -120,6 +121,7 @@ export default function Login() {
                 <input
                   id="Password"
                   type={type}
+                  value={password}
                   placeholder={isMobileScreen?("Password"):("")}
                   className="form-control"
                   style={{}}
