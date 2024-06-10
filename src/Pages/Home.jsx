@@ -22,10 +22,23 @@ import "../Styles/home.css";
 import DeleteModal from "../DeleteModal";
 import { useLogout } from "../hooks/useLogout";
 
+const fetchData = async (user, setEmpData, logout) => {
+  try {
+    const response = await axios.get("http://localhost:5000/emp-data", {
+      headers: { Authorization: "Bearer " + user.token },
+    });
+    setEmpData(response.data);
+  } catch (error) {
+    console.log(error)
+    logout()
+  }
+};
+
 export default function Home() {
   const [empData, setEmpData] = useState({ emps: [] });
   const { user } = useAuthContext();
   const [searchTerm, setSearchTerm] = useState("");
+ 
   // const [doDelete, setDoDelete]  = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { logout } = useLogout();
@@ -38,20 +51,10 @@ export default function Home() {
     query: "(orientation: landscape)",
   });
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/emp-data", {
-        headers: { Authorization: "Bearer " + user.token },
-      });
-      setEmpData(response.data);
-    } catch (error) {
-      console.log(error)
-      logout()
-    }
-  };
+  
 
   useEffect(() => {
-    fetchData();
+    fetchData(user, setEmpData,logout);
   }, []);
 
   const employees = empData.emps;
@@ -96,9 +99,7 @@ export default function Home() {
     </TrailingActions>
   );
 
-  const handleBlogReq = (empId) =>{
-    navigate(`/Blogs/${empId}`)
-  }
+
 
   return (
     
@@ -110,7 +111,7 @@ export default function Home() {
 
       <div style={{margin:"2% auto"}}>
         <div className="input-group m-2" style={{width: isMobileScreen?("75vw"):("35vw"), height: isMobileScreen?("2.0vh"):("")}}>
-      <input type="text" className="form-control" placeholder="Search Employee" value={searchTerm} onChange={(e)=>{setSearchTerm(e.target.value)}}aria-label="employee search bar" aria-describedby="button-addon2"/>
+      <input type="text" className="form-control" placeholder="Search Employee" value={searchTerm} onChange={(e)=>{setSearchTerm(e.target.value)}} aria-label="employee search bar" aria-describedby="button-addon2"/>
       <button className="btn btn-secondary" type="button" id="button-addon2" ><Icon icon={ic_search}/></button>
     </div>
       {}
@@ -190,9 +191,7 @@ export default function Home() {
                             {emp.email}
                           </span>
                         </div>
-                        <div > 
-                          <button className="btn btn-dark" onClick={()=>handleBlogReq(emp._id)}>blogs</button>
-                        </div>
+                      
                       </div>
                     </div>
                   </SwipeableListItem>
@@ -211,7 +210,7 @@ export default function Home() {
                 <th scope="col"> Profile Picture</th>
 
                 <th scope="col">Email</th>
-                <th scope="col">Blogs</th>
+                {/* <th scope="col">Blogs</th> */}
                  <th scope="col"> Update/Delete</th>
               </tr>
             </thead>
@@ -241,13 +240,7 @@ export default function Home() {
                     </td>
                     <td>{emp.email}</td>
                     
-                    <td>
-                        <div style={{display:"flex", alignItems:"center", paddingTop: "5px"}}>
-                           <button className="btn btn-dark"onClick={()=>{handleBlogReq(emp._id)}}>Blogs...</button>
-
-                        </div>
-                    
-                    </td>
+               
                     <td>
                       <button
                         type="button"
