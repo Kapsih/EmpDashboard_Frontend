@@ -5,6 +5,7 @@ import Home from "./Pages/Home";
 import Navbar from "./Navbar";
 import UpdateForm from "./Pages/UpdateForm";
 import Form from "./Pages/Form";
+import CreateBlogs from "./Pages/CreateBlogs";
 import "bootswatch/dist/flatly/bootstrap.min.css";
 import { useAuthContext } from "./hooks/useAuthContext";
 import Breadcrumbs from "./Breadcrumbs";
@@ -25,7 +26,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={!user? <Login/>: <Navigate to="/Home"/>} />
         <Route path="/SignUp" element={!user? <SignUp />:<Navigate to="/Home"/>} />
-        {/* <Route path="/CreateBlog" element={user ? <CreateBlogs/>: <Navigate to="/"/>} /> */}
+        <Route path="/CreateBlog" element={user ? <CreateBlogs/>: <Navigate to="/"/>} />
         <Route path="/Blogs" element={user ? <Blogs/>: <Navigate to="/Home"/>}/>
         <Route path="/Home" element={user? <Home />:<Navigate to="/"/>} />
         <Route path="/UpdateForm/:id" element={user?<UpdateForm />:<Navigate to="/"/>} />

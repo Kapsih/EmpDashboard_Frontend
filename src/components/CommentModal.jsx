@@ -20,6 +20,8 @@ export default function CommentModal({showModal, handleClose, user, blogPostId,d
         blogPostId: blogId,
         AuthorName: AuthorName,
         AuthorPhotoUrl: AuthorPhotoUrl,
+      }, {
+        headers: { Authorization: "Bearer " + user.token },
       })
       .then((resp) => {
           console.log(resp)

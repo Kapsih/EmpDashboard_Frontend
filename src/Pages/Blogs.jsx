@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 import { TfiCommentAlt } from "react-icons/tfi";
 import CommentModal from "../components/CommentModal";
 import { useAuthContext } from "../hooks/useAuthContext";
+import dayjs from "dayjs";
 
-const fetchComments = (setComments) => {
+import relativeTime from "dayjs/plugin/relativeTime.js";
+
+const fetchComments = (setComments, user) => {
   axios
-    .get(`http://localhost:5000/comments/`)
+    .get(`http://localhost:5000/comments/`, {
+      headers: { Authorization: "Bearer " + user.token },
+    })
     .then((resp) => {
       setComments(resp.data.comments);
     })
@@ -17,65 +22,73 @@ const fetchComments = (setComments) => {
 };
 
 export const Blogs = () => {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [comments, setComments] = useState([]);
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [dummy, setDummy] = useState(false)
-  const [blogPostId, setBlogPostId] = useState("")
-  const {user} = useAuthContext()
+  const [dummy, setDummy] = useState(false);
+  const [blogPostId, setBlogPostId] = useState("");
+  const { user } = useAuthContext();
+  const [showComments, setShowComments] = useState({ state: false, id: null });
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
   });
+  dayjs.extend(relativeTime);
 
   useEffect(() => {
     try {
-      axios.get("http://localhost:5000/blogs/")
-      .then((resp) => {
-        setBlogs(resp.data.blogs);
-      });
+      axios
+        .get("http://localhost:5000/blogs/", {
+          headers: { Authorization: "Bearer " + user.token },
+        })
+        .then((resp) => {
+          setBlogs(resp.data.blogs);
+        });
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-fetchComments(setComments)
+    fetchComments(setComments, user);
   }, [dummy]);
-  
-  const handleClose = () => {
-    setShowModal(false)};
-  
-  // const handleShow = () => setShowModal("modal");
-const openCommentModal = (blogPostId)=>{
-      setBlogPostId(blogPostId)
-      setShowModal(true)
-      
-}
 
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  // const handleShow = () => setShowModal("modal");
+  const openCommentModal = (blogPostId) => {
+    setBlogPostId(blogPostId);
+    setShowModal(true);
+  };
 
   return (
     <div>
-    <CommentModal showModal={showModal} handleClose={handleClose} user={user} blogPostId={blogPostId} dummy={dummy} setDummy={setDummy}/>
-    
+      <CommentModal
+        showModal={showModal}
+        handleClose={handleClose}
+        user={user}
+        blogPostId={blogPostId}
+        dummy={dummy}
+        setDummy={setDummy}
+      />
+
       {blogs.map((blog, index) => {
         return (
           <div
-          key={blog._id}
+            key={blog._id}
             style={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
             }}
           >
-
             <div
-              
               className={
-                index % 2 === 0
-                  ? "card text-white bg-dark"
-                  : "card bg-light "
+                index % 2 === 0 ? "card text-white bg-dark" : "card bg-light "
               }
               style={{
                 margin: isMobileScreen ? "0 auto" : "0 auto",
-                marginTop: isMobileScreen?"8%":"3%",
+                marginTop: isMobileScreen ? "8%" : "3%",
+                marginBottom: isMobileScreen ? "1%" : "0%",
                 width: isMobileScreen ? "90vw" : "60vw",
               }}
             >
@@ -90,12 +103,15 @@ const openCommentModal = (blogPostId)=>{
                 <img
                   src={blog.AuthorPhotoUrl}
                   alt=""
-                  style={{ borderRadius: "50%", height: "5vh" }}
+                  style={{ borderRadius: "50%", height: "3vh" }}
                 />
-                <h6 style={{ marginLeft: "1.5%" }}>{blog.AuthorName}</h6>
-                <h4 className="card-title" style={{ margin: "0 auto" }}>
+                <p style={{ paddingLeft: "1%", paddingTop:"1%", fontSize:"15px" }}>{blog.AuthorName}</p>
+                <h5 className="card-title" style={{ margin: "0 auto" }}>
                   {blog.BlogTitle}
-                </h4>
+                </h5>
+                <p key={blog._id} style={{ fontSize: "12px" }}>
+                  {dayjs(blog.createdAt).fromNow()}
+                </p>
               </div>
               <div
                 className="card-body"
@@ -111,38 +127,108 @@ const openCommentModal = (blogPostId)=>{
                   {blog.BlogContent}
                 </p>
               </div>
-              <div style={{display:"flex", justifyContent:"end", marginRight:"5%", marginBottom:"1.5%", cursor:"pointer"}}>
-              
-              <button type="button" className="btn btn-primary" onClick={()=>{openCommentModal(blog._id)}}>
-              <TfiCommentAlt size={20} />
-              </button>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  marginBottom: "2%",
+                  cursor: "pointer",
+                  flexDirection:"row",
+                  justifyContent:"space-between"
+                }}
+              >
+                <button
+                  type="button"
+                  style={{ marginLeft:"5%"}}
+                  className="btn btn-primary"
+                  
+                  id={blog._id}
+                  onClick={(e) => {
+                    setShowComments({
+                      id: e.target.id,
+                      state: !showComments.state,
+                    });
+                  }}
+                >
+                  <TfiCommentAlt
+                    id={blog._id}
+                    onClick={(e) => {
+                      setShowComments({
+                        id: e.target.id,
+                        state: !showComments.state,
+                      });
+                    }}
+                    size={20}
+                  />
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ marginRight: "5%" }}
+                  onClick={() => {
+                    openCommentModal(blog._id);
+                  }}
+                >
+                  Comment
+                </button>
               </div>
-              
-        
             </div>
-            <div className="commentBox" style={{display:"flex", justifyContent:"center"}}>
-                <textarea id={blog._id} style={{width: isMobileScreen ? "90vw" : "60vw", borderRadius:"5px", display:(showCommentBox)?"block":"none"}} rows="4" ></textarea>
-              </div>
-           
-            {comments.map((comment)=>{
-                    if(comment.blogPostId === blog._id){
-                       return (<div key={comment._id} style={{background:"beige" , width: isMobileScreen ? "90vw" : "60vw", margin: isMobileScreen?"1% auto":"7px auto", borderRadius:"10px"}}>
-                                <div style={{display:"flex", marginLeft:isMobileScreen?"5%":"1.5%", marginTop:isMobileScreen?"2%":"1%"}}>
-                                    <img src={comment.AuthorPhotoUrl}  style={{ borderRadius: "50%", height: "3vh" }}/>
-                                    <p style={{marginLeft:"1%"}}>{comment.AuthorName}</p>
-                                </div>
-                                <div style={{marginLeft:"5%"}}>
-                                    <p>{comment.commentBody}</p>
-                                </div>
-                        </div>
-                       )
-                    }
-                })}
-        
+
+            {showComments.state &&
+              comments.map((comment) => {
+                if (
+                  comment.blogPostId === blog._id &&
+                  showComments.id === blog._id
+                ) {
+                  return (
+                    <div
+                      key={comment._id}
+                      style={{
+                        background: "beige",
+                        width: isMobileScreen ? "90vw" : "60vw",
+                        margin: isMobileScreen ? "1% auto" : "7px auto",
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection:"row",
+                          marginLeft: isMobileScreen ? "5%" : "1.5%",
+                          marginTop: isMobileScreen ? "2%" : "1%",
+                          
+                        }}
+                      >
+                        <img
+                          src={comment.AuthorPhotoUrl}
+                          style={{ borderRadius: "50%", height: "3vh" }}
+                        />
+                        <p style={{ marginLeft: "1%", flex:"2"}}>{comment.AuthorName}</p>
+                       
+                        <p
+                          style={{
+                            
+                            fontSize: "12px",
+                            marginRight:"5px"
+                          }}
+                          key={comment._id}
+                        >
+                          {dayjs(comment.createdAt).fromNow()}
+                        </p>
+                      
+                      </div>
+                      
+                      <div style={{ marginLeft: "5%" }}>
+                        <p>{comment.commentBody}</p>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
           </div>
         );
       })}
-
     </div>
   );
 };

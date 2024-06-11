@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+
 
 
 export default function Navbar1() {
@@ -20,9 +20,9 @@ export default function Navbar1() {
   }
  
 
-  // const createBlogPage = ()=>{
-  //   navigate("/CreateBlog")
-  // }
+  const createBlogPage = ()=>{
+    navigate("/CreateBlog")
+  }
   return (
  
    <Navbar expand="lg" bg="primary" data-bs-theme="dark">
@@ -33,6 +33,7 @@ export default function Navbar1() {
           {user && <Nav className="me-auto">
             <Nav.Link href="/Home">Home</Nav.Link>
             <Nav.Link onClick={handleBlogReq}>Blogs</Nav.Link>
+            <Nav.Link onClick={createBlogPage}>Create Blog</Nav.Link>
           </Nav>
           }
           {user &&  <Nav className="justify-content-end">
