@@ -13,8 +13,12 @@ for (let number = 1; number <= totalPages; number++) {
             prev.set("page", number)
             return prev
         })
-        handleSubmit()
-     
+        setSearchParams(prev=>{
+          const newParams = new URLSearchParams(prev);
+          newParams.set("page", number);
+          return newParams
+      })
+       
     }} active={number === active}>
       {number}
     </Pagination.Item>,

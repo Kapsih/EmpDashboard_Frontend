@@ -26,7 +26,7 @@ const fetchComments = (setComments, user) => {
 
 export const Blogs = () => {
  
-  const [searchParams, setSearchParams] = useSearchParams({Author:"All", order:"asc", page:"1"})
+  const [searchParams, setSearchParams] = useSearchParams({Author:"All", order:"desc", page:"1"})
   const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [paginationData, setPaginationData] = useState({
