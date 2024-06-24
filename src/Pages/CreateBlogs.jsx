@@ -16,12 +16,14 @@ export default function CreateBlogs() {
     e.preventDefault();
 
     axios
-      .post("http://localhost:5000/blogs", {
+      .post("http://localhost:5000/blogs/", {
         BlogTitle: blogtitle,
         BlogContent: blogContent,
         Author: user.user.id,
         AuthorPhotoUrl: user.user.photoUrl ,
         AuthorName: user.user.name
+      }, {
+        headers: { Authorization: "Bearer " + user.token },
       })
       .then((response) => console.log(response))
       .catch((response) => console.log(response));
