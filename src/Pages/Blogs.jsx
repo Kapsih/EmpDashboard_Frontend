@@ -6,11 +6,12 @@ import CommentModal from "../components/CommentModal";
 import { useAuthContext } from "../hooks/useAuthContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 import TextEditor from "../components/TextEditor";
-import {  useSearchParams  } from "react-router-dom";
-import Pagination from 'react-bootstrap/Pagination';
+import { useSearchParams } from "react-router-dom";
+import Pagination from "react-bootstrap/Pagination";
 import PaginationLocal from "../components/Pagination";
+
 const fetchComments = (setComments, user) => {
   axios
     .get(`http://localhost:5000/comments/`, {
@@ -25,67 +26,82 @@ const fetchComments = (setComments, user) => {
 };
 
 export const Blogs = () => {
- 
-  const [searchParams, setSearchParams] = useSearchParams({Author:"All", order:"desc", page:"1"})
+  const [searchParams, setSearchParams] = useSearchParams({
+    Author: "All",
+    order: "desc",
+    page: "1",
+  });
   const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [paginationData, setPaginationData] = useState({
-    totalPages:"1",
-    currentPage:"1"
-  })
+    totalPages: "1",
+    currentPage: "1",
+  });
   const [comments, setComments] = useState([]);
-  const [currentPage, setCurrentPage] = useState("1")
+  const [currentPage, setCurrentPage] = useState("1");
   const [dummy, setDummy] = useState(false);
   const [blogPostId, setBlogPostId] = useState("");
   const { user } = useAuthContext();
   const [showComments, setShowComments] = useState({ state: false, id: null });
-  const [authors, setAuthors] = useState([])
+  const [authors, setAuthors] = useState([]);
+  const [fetchData, setFetchData] = useState(false);
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
   });
   dayjs.extend(relativeTime);
 
-
   const handleSubmit = async (e) => {
     // e.preventDefault();
-    
+
     let author = searchParams.get("Author");
     let order = searchParams.get("order");
-  
+    let limit = searchParams.get("limit")
     try {
-      const resp = await axios.get(`http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=3&page=${currentPage}`, {
-        headers: { Authorization: "Bearer " + user.token },
+      const resp = await axios.get(
+        `http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=${limit}&page=${currentPage}`,
+        {
+          headers: { Authorization: "Bearer " + user.token },
+        }
+      );
+
+      setPaginationData({
+        ...paginationData,
+        totalPages: resp.data.totalPage,
+        currentPage: resp.data.currentPage,
       });
-    
-      setPaginationData({ ...paginationData, "totalPages": resp.data.totalPage, "currentPage": resp.data.currentPage });
       setBlogs(resp.data.blogs);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
+    let author = searchParams.get("Author") || "All";
+    let order = searchParams.get("order") || "desc";
+    let limit = searchParams.get("limit") || "3";
 
     try {
-      axios.get(`http://localhost:5000/blogs/authors`, {
-        headers: { Authorization: "Bearer " + user.token },
-      })
-      .then((resp)=>{
-         setAuthors(resp.data.authors)
-         
-      })
-    } catch (error) {
-      console.log(error)
-    }
-    try {
-    
       axios
-        .get(`http://localhost:5000/blogs/`, {
+        .get(`http://localhost:5000/blogs/authors`, {
           headers: { Authorization: "Bearer " + user.token },
         })
         .then((resp) => {
-        
-          setPaginationData({...paginationData, "totalPages": resp.data.totalPage, "currentPage":resp.data.currentPage})
-
+          setAuthors(resp.data.authors);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      axios
+        .get(`http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=${limit}&page=${currentPage}`, {
+          headers: { Authorization: "Bearer " + user.token },
+        })
+        .then((resp) => {
+          setPaginationData({
+            ...paginationData,
+            totalPages: resp.data.totalPage,
+            currentPage: resp.data.currentPage,
+          });
 
           setBlogs(resp.data.blogs);
         });
@@ -93,91 +109,132 @@ export const Blogs = () => {
       console.log(error);
     }
     fetchComments(setComments, user);
-  }, [dummy]);
+  }, [dummy, fetchData]);
 
   const handleClose = () => {
     setShowModal(false);
   };
 
-  const handleDropdownChange = (e)=> {
-    
-  
-    setSearchParams(prev=>{
-        const newParams = new URLSearchParams(prev);
-        newParams.set("Author", e.target.value);
-        return newParams
-    })
-   
-  }
+  const handleDropdownChange = (e) => {
+    console.log(e.target.name)
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set(e.target.name, e.target.value);
+      return newParams;
+    });
+  };
+
   // const handleShow = () => setShowModal("modal");
   const openCommentModal = (blogPostId) => {
     setBlogPostId(blogPostId);
     setShowModal(true);
   };
-  const handleOrderChange = (e)=>{
-    setSearchParams(prev=>{
-      prev.set("order", e.target.value)
-      return prev
-    })
-
-  }
+  const handleOrderChange = (e) => {
+    setSearchParams((prev) => {
+      prev.set("order", e.target.value);
+      return prev;
+    });
+  };
   
- 
+
   return (
-    <div style={{  display: "flex" , flexDirection: "column" }}>
-
-      <div className="sorting-filtering-bar" style={{display:"flex", flexDirection:"row", justifyContent:"space-around", margin:"2% 0% 0% 0%" , height:"5vh"}} >
-       
-      <br />
-        <form style={{display:"flex", flexDirection:"row", justifyItems:"center"}}>
-        
-          <Form.Select onChange={handleDropdownChange} style={{width:"15vw"}} aria-label="Author selection dropdown">
-            <option value="all">All</option>
-          
-            {authors.map((author, index)=>{
-                
-                return(
-                  <option key={index} value={author} >{author} </option>
-                )
-            })}
-      
-    </Form.Select>
-   
-    <div style={{display:"flex", marginLeft:"8%", width:"18vw", justifyItems:"center"} }>
-          <Form.Check
-          inline
-        value="desc"
-        onChange={handleOrderChange}
-        label="Latest first"
-        name="sortingOrder"
-        type="radio"
-        
-        id={'desc'}
-      />
-      <Form.Check
-      inline
-        value="asc"
-        onChange={handleOrderChange}
-        label="Oldest first"
-        name="sortingOrder"
-        type="radio"
-        id={'asc'}
-      />
-          </div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        className="sorting-filtering-bar"
+        style={{
+          // display: "flex",
+          // flexDirection: "row",
+          // justifyContent: "start",
+          margin: "1% 0% 0% 2%",
+        }}
+      >
+        <form style={{ display: "flex", flexDirection: "row"}}>
+          <div style={{display:"flex", flexDirection:"column", paddingTop:"10px"}}>
+          <Form.Select
+          name="Author"
+          size="sm"
+          onChange={handleDropdownChange}
+          style={{ width: "8vw", marginTop:"0.5%" }}
+          aria-label="Author selection dropdown"
+        >
          
-             <button className="btn btn-primary"  onClick={handleSubmit}  type="button">Search</button>
+          <option value="all" >All</option>
 
+          {authors.map((author, index) => {
+            return (
+            <option  key={index} value={author}>
+                {author}{" "}
+              </option>
+            );
+          })}
+        </Form.Select>
+        <Form.Select
+        name="limit"
+        size="sm"
+        onChange={handleDropdownChange}
+        style={{ width: "8vw", marginTop:"0.5%" }}
+        aria-label="Limit selection dropdown"
+      >
+        <option   value="3">3</option>
+        <option   value="5">5</option>
+      </Form.Select>
+          </div>
+
+            <div style={{display:"flex", marginLeft:"1%" ,flexDirection:"column"}}>
+            <div
+            style={{
+              // display: "flex",
+              width:"6.5vw",
+              // flexDirection:"row",
+             
+              paddingTop:"15px"
+             
+            }}
+          >
+            <Form.Check
+              // inline
+              name="sortingOrder"
+              type="radio"
+              id={"desc"}
+              value="desc"
+              onChange={handleOrderChange}
+              label="Latest"
+              
+            />
+            <Form.Check
+              // inline
+              name="sortingOrder"
+              type="radio"
+              id={"asc"}
+              value="asc"
+              onChange={handleOrderChange}
+              label="Oldest"
+              
+            />
+          </div>
+
+        
+
+            </div>
+            <div>
+            <button
+            style={{width:"6vw", marginTop:"12px", borderRadius:"8px"}}
+            className="btn btn-primary"
+            onClick={handleSubmit}
+            type="button"
+          >
+            Search
+          </button>
+            </div>
         
         </form>
-        
       </div>
-      <hr/>
-     
+      
+      <hr />
 
-      <div style={{display:"flex", flexDirection:"column", flex:"5" }}>
-        <div className="editor" style={{width:"70%" , margin:"1% auto"}}>
-        {/* <TextEditor /> */}
-
+      <div style={{ display: "flex", flexDirection: "column"}}>
+        <div className="editor" style={{ width: "70%", margin: "1% auto" }}>
+          {/* <TextEditor /> */}
         </div>
 
         <CommentModal
@@ -353,13 +410,22 @@ export const Blogs = () => {
             </div>
           );
         })}
-        
       </div>
-      <div style={{display:"flex", justifyContent:"center" , marginTop:"1%"}}>
-        <PaginationLocal totalPages={paginationData.totalPages} currentPage={paginationData.currentPage} style={{height:"3vh"}} setSearchParams={setSearchParams} handleSubmit={handleSubmit} searchParams={searchParams} setCurrentPage={setCurrentPage}/>
-
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "1%" }}
+      >
+        <PaginationLocal
+          totalPages={paginationData.totalPages}
+          currentPage={paginationData.currentPage}
+          style={{ height: "3vh" }}
+          setSearchParams={setSearchParams}
+          handleSubmit={handleSubmit}
+          searchParams={searchParams}
+          fetchData={fetchData}
+          setFetchData={setFetchData}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
-
     </div>
   );
 };
