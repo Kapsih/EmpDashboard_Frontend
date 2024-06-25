@@ -11,6 +11,7 @@ import TextEditor from "../components/TextEditor";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import PaginationLocal from "../components/Pagination";
+import { IoIosMove } from "react-icons/io";
 
 const fetchComments = (setComments, user) => {
   axios
@@ -26,6 +27,7 @@ const fetchComments = (setComments, user) => {
 };
 
 export const Blogs = () => {
+  const commentRef = useRef(null)
   const [searchParams, setSearchParams] = useSearchParams({
     Author: "All",
     order: "desc",
@@ -33,6 +35,7 @@ export const Blogs = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
+  
   const [paginationData, setPaginationData] = useState({
     totalPages: "1",
     currentPage: "1",
@@ -139,22 +142,14 @@ export const Blogs = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <div
-        className="sorting-filtering-bar"
-        style={{
-          // display: "flex",
-          // flexDirection: "row",
-          // justifyContent: "start",
-          margin: "1% 0% 0% 2%",
-        }}
-      >
-        <form style={{ display: "flex", flexDirection: "row"}}>
-          <div style={{display:"flex", flexDirection:"column", paddingTop:"10px"}}>
+     
+        <form style={{ display: "flex", flexDirection: "row", justifyContent: isMobileScreen?"center":"end", margin: isMobileScreen?"2% 0% 0% 0%":"1% 10% 0% 0%"}}>
+          <div style={{display:"flex", flexDirection:"row",  paddingTop:isMobileScreen?"15px":"10px", marginRight:isMobileScreen?"1%":"1"}}>
           <Form.Select
           name="Author"
           size="sm"
           onChange={handleDropdownChange}
-          style={{ width: "8vw", marginTop:"0.5%" }}
+          style={{ height: isMobileScreen?"4.0vh":"", width: isMobileScreen?"30vw":"15vw", marginTop:"0.5%" }}
           aria-label="Author selection dropdown"
         >
          
@@ -172,7 +167,7 @@ export const Blogs = () => {
         name="limit"
         size="sm"
         onChange={handleDropdownChange}
-        style={{ width: "8vw", marginTop:"0.5%" }}
+        style={{ height:isMobileScreen?"4.0vh":"", width: isMobileScreen?"15vw":"8vw", marginTop:"0.5%", marginLeft:"3%" }}
         aria-label="Limit selection dropdown"
       >
         <option   value="3">3</option>
@@ -180,19 +175,18 @@ export const Blogs = () => {
       </Form.Select>
           </div>
 
-            <div style={{display:"flex", marginLeft:"1%" ,flexDirection:"column"}}>
+            <div style={{display:"flex", marginLeft:isMobileScreen?"1.5%":"1%" }}>
             <div
             style={{
-              // display: "flex",
-              width:"6.5vw",
-              // flexDirection:"row",
+              display: "flex",
+              flexDirection: isMobileScreen?"column":"row",
              
               paddingTop:"15px"
              
             }}
           >
             <Form.Check
-              // inline
+
               name="sortingOrder"
               type="radio"
               id={"desc"}
@@ -202,7 +196,7 @@ export const Blogs = () => {
               
             />
             <Form.Check
-              // inline
+              style={{marginLeft:isMobileScreen?"1%":"10%"}}
               name="sortingOrder"
               type="radio"
               id={"asc"}
@@ -216,9 +210,9 @@ export const Blogs = () => {
         
 
             </div>
-            <div>
+            <div style={{ marginLeft: isMobileScreen?"4.5%":"2%", paddingTop: isMobileScreen?"2.5px":"0px"}}>
             <button
-            style={{width:"6vw", marginTop:"12px", borderRadius:"8px"}}
+            style={{ marginTop:"12px", borderRadius:"8px"}}
             className="btn btn-primary"
             onClick={handleSubmit}
             type="button"
@@ -228,14 +222,14 @@ export const Blogs = () => {
             </div>
         
         </form>
-      </div>
+      
       
       <hr />
 
       <div style={{ display: "flex", flexDirection: "column"}}>
-        <div className="editor" style={{ width: "70%", margin: "1% auto" }}>
-          {/* <TextEditor /> */}
-        </div>
+        {/* <div className="editor" style={{ width: "70%", margin: "1% auto" }}>
+          <TextEditor />
+        </div> */}
 
         <CommentModal
           showModal={showModal}
@@ -262,7 +256,7 @@ export const Blogs = () => {
                 }
                 style={{
                   margin: isMobileScreen ? "0 auto" : "0 auto",
-                  marginTop: isMobileScreen ? "8%" : "3%",
+                  marginTop: isMobileScreen ? "5%" : "2%",
                   marginBottom: isMobileScreen ? "1%" : "0%",
                   width: isMobileScreen ? "90vw" : "60vw",
                 }}
@@ -283,16 +277,16 @@ export const Blogs = () => {
                   <p
                     style={{
                       paddingLeft: "1%",
-                      paddingTop: "1%",
+                      paddingTop: isMobileScreen?"3%":"1%",
                       fontSize: "15px",
                     }}
                   >
                     {blog.AuthorName}
                   </p>
-                  <h5 className="card-title" style={{ margin: "0 auto" }}>
+                  <h6 className="card-title" style={{ margin: "0 auto" }}>
                     {blog.BlogTitle}
-                  </h5>
-                  <p key={blog._id} style={{ fontSize: "12px" }}>
+                  </h6>
+                  <p key={blog._id} style={{ fontSize: isMobileScreen?"12px":"14px" }}>
                     {dayjs(blog.createdAt).fromNow()}
                   </p>
                 </div>
@@ -318,12 +312,24 @@ export const Blogs = () => {
                     marginBottom: "2%",
                     cursor: "pointer",
                     flexDirection: "row",
-                    justifyContent: "space-between",
+                    justifyContent: "end",
                   }}
                 >
+                  
                   <button
                     type="button"
-                    style={{ marginLeft: "5%" }}
+                    className="btn btn-primary"
+                    style={{ marginRight: "1%" }}
+                    onClick={() => {
+                      openCommentModal(blog._id);
+                    }}
+                  >
+                    Add comment
+                  </button>
+                  <button
+                    type="button"
+                    style={{ marginRight: "6%" }}
+                    ref={commentRef}
                     className="btn btn-primary"
                     id={blog._id}
                     onClick={(e) => {
@@ -335,24 +341,13 @@ export const Blogs = () => {
                   >
                     <TfiCommentAlt
                       id={blog._id}
-                      onClick={(e) => {
-                        setShowComments({
-                          id: e.target.id,
-                          state: !showComments.state,
-                        });
-                      }}
+                      onClick={()=>{
+                        commentRef.current.click();
+                      }
+
+                      }
                       size={20}
                     />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    style={{ marginRight: "5%" }}
-                    onClick={() => {
-                      openCommentModal(blog._id);
-                    }}
-                  >
-                    Comment
                   </button>
                 </div>
               </div>
@@ -406,13 +401,15 @@ export const Blogs = () => {
                       </div>
                     );
                   }
-                })}
+                  
+                })
+                }
             </div>
           );
         })}
       </div>
       <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "1%" }}
+        style={{ display: "flex", justifyContent: "center", marginTop: isMobileScreen?"5%": "2%" }}
       >
         <PaginationLocal
           totalPages={paginationData.totalPages}
