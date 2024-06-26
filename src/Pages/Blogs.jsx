@@ -7,11 +7,12 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import Form from "react-bootstrap/Form";
-import TextEditor from "../components/TextEditor";
+import { BsSortDown,  BsSortUp  } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "react-bootstrap/Pagination";
 import PaginationLocal from "../components/Pagination";
-import { IoIosMove } from "react-icons/io";
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+
 
 const fetchComments = (setComments, user) => {
   axios
@@ -33,6 +34,7 @@ export const Blogs = () => {
     order: "desc",
     page: "1",
   });
+  const [searchOrder, setSearchOrder] = useState("desc")
   const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
   
@@ -132,9 +134,10 @@ export const Blogs = () => {
     setBlogPostId(blogPostId);
     setShowModal(true);
   };
-  const handleOrderChange = (e) => {
+  const handleOrderChange = () => {
+    setSearchOrder((searchOrder==="asc")?"desc":"asc")
     setSearchParams((prev) => {
-      prev.set("order", e.target.value);
+      prev.set("order", searchOrder);
       return prev;
     });
   };
@@ -145,7 +148,8 @@ export const Blogs = () => {
      
         <form style={{ display: "flex", flexDirection: "row", justifyContent: isMobileScreen?"center":"end", margin: isMobileScreen?"2% 0% 0% 0%":"1% 10% 0% 0%"}}>
           <div style={{display:"flex", flexDirection:"row",  paddingTop:isMobileScreen?"15px":"10px", marginRight:isMobileScreen?"1%":"1"}}>
-          <Form.Select
+            <FloatingLabel controlId="floatingSelect" label="Author" >
+            <Form.Select
           name="Author"
           size="sm"
           onChange={handleDropdownChange}
@@ -163,16 +167,20 @@ export const Blogs = () => {
             );
           })}
         </Form.Select>
-        <Form.Select
+            </FloatingLabel >
+          <FloatingLabel controlId="floatingSelect" label="Blogs per page">
+          <Form.Select
         name="limit"
         size="sm"
         onChange={handleDropdownChange}
-        style={{ height:isMobileScreen?"4.0vh":"", width: isMobileScreen?"15vw":"8vw", marginTop:"0.5%", marginLeft:"3%" }}
+        style={{ height:isMobileScreen?"4.0vh":"", width: isMobileScreen?"30vw":"14vw", marginTop:"0.5%", marginLeft:"3%" }}
         aria-label="Limit selection dropdown"
       >
         <option   value="3">3</option>
         <option   value="5">5</option>
       </Form.Select>
+             </FloatingLabel>
+       
           </div>
 
             <div style={{display:"flex", marginLeft:isMobileScreen?"1.5%":"1%" }}>
@@ -185,26 +193,9 @@ export const Blogs = () => {
              
             }}
           >
-            <Form.Check
+      
 
-              name="sortingOrder"
-              type="radio"
-              id={"desc"}
-              value="desc"
-              onChange={handleOrderChange}
-              label="Latest"
-              
-            />
-            <Form.Check
-              style={{marginLeft:isMobileScreen?"1%":"10%"}}
-              name="sortingOrder"
-              type="radio"
-              id={"asc"}
-              value="asc"
-              onChange={handleOrderChange}
-              label="Oldest"
-              
-            />
+           { (searchOrder==="desc")?<BsSortUp size={50} onClick={handleOrderChange}/>:<BsSortDown size={50} onClick={handleOrderChange}/>} 
           </div>
 
         
