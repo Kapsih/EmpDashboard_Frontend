@@ -9,7 +9,6 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 import Form from "react-bootstrap/Form";
 import { BsSortDown,  BsSortUp  } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
-import Pagination from "react-bootstrap/Pagination";
 import PaginationLocal from "../components/Pagination";
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
@@ -55,30 +54,6 @@ export const Blogs = () => {
   });
   dayjs.extend(relativeTime);
 
-  const handleSubmit = async (e) => {
-    // e.preventDefault();
-
-    let author = searchParams.get("Author");
-    let order = searchParams.get("order");
-    let limit = searchParams.get("limit")
-    try {
-      const resp = await axios.get(
-        `http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=${limit}&page=${currentPage}`,
-        {
-          headers: { Authorization: "Bearer " + user.token },
-        }
-      );
-
-      setPaginationData({
-        ...paginationData,
-        totalPages: resp.data.totalPage,
-        currentPage: resp.data.currentPage,
-      });
-      setBlogs(resp.data.blogs);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     let author = searchParams.get("Author") || "All";
@@ -116,9 +91,11 @@ export const Blogs = () => {
     fetchComments(setComments, user);
   }, [dummy, fetchData]);
 
+
   const handleClose = () => {
     setShowModal(false);
   };
+
 
   const handleDropdownChange = (e) => {
     console.log(e.target.name)
@@ -127,9 +104,9 @@ export const Blogs = () => {
       newParams.set(e.target.name, e.target.value);
       return newParams;
     });
+    setFetchData(!fetchData)
   };
 
-  // const handleShow = () => setShowModal("modal");
   const openCommentModal = (blogPostId) => {
     setBlogPostId(blogPostId);
     setShowModal(true);
@@ -140,6 +117,7 @@ export const Blogs = () => {
       prev.set("order", searchOrder);
       return prev;
     });
+    setFetchData(!fetchData)
   };
   
 
@@ -201,27 +179,14 @@ export const Blogs = () => {
         
 
             </div>
-            <div style={{ marginLeft: isMobileScreen?"4.5%":"2%", paddingTop: isMobileScreen?"2.5px":"0px"}}>
-            <button
-            style={{ marginTop:"12px", borderRadius:"8px"}}
-            className="btn btn-primary"
-            onClick={handleSubmit}
-            type="button"
-          >
-            Search
-          </button>
-            </div>
-        
+           
         </form>
       
       
       <hr />
 
       <div style={{ display: "flex", flexDirection: "column"}}>
-        {/* <div className="editor" style={{ width: "70%", margin: "1% auto" }}>
-          <TextEditor />
-        </div> */}
-
+        
         <CommentModal
           showModal={showModal}
           handleClose={handleClose}
@@ -407,7 +372,6 @@ export const Blogs = () => {
           currentPage={paginationData.currentPage}
           style={{ height: "3vh" }}
           setSearchParams={setSearchParams}
-          handleSubmit={handleSubmit}
           searchParams={searchParams}
           fetchData={fetchData}
           setFetchData={setFetchData}
