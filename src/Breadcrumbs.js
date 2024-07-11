@@ -13,7 +13,7 @@ export default function Breadcrumbs() {
     <div
       style={{
     
-        margin: "3% 3% 0 10%",
+        margin: "3% 3% 2% 10%",
         
         
       }}

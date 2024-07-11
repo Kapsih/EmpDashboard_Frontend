@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useRef } from "react";
 import { useMediaQuery } from "react-responsive";
+import { AlertContext } from "../Context/AlertContext";
 
 
 
 export default function UpdateForm() {
+  const {showAlert, setShowAlert} = useContext(AlertContext);
   const fileRef = useRef(null);
   const { user } = useAuthContext();
   const { id } = useParams();
@@ -65,9 +67,18 @@ export default function UpdateForm() {
       .patch(`http://localhost:5000/emp-data/${id}`, employee, {
         headers: { Authorization: "Bearer " + user.token },
       })
-      .then((response) => console.log(response))
+      .then((response) => {
+        console.log(response)
+        setShowAlert({...showAlert, 
+          AlertType: "userUpdated",
+          show: true
+        })
+      })
       .catch((response) => console.log(response));
+    
     navigate("/home");
+    
+
    };
 
   const loadEmpDetails = async () => {

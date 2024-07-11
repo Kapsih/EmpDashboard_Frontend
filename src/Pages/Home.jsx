@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -8,6 +8,10 @@ import {ic_delete} from 'react-icons-kit/md/ic_delete';
 import {ic_search} from 'react-icons-kit/md/ic_search';
 import {ic_mode_edit} from 'react-icons-kit/md/ic_mode_edit';
 import {ic_person_add} from 'react-icons-kit/md/ic_person_add'
+import UserCreatedAlert from "../components/UserCreatedAlert";
+import UserDeletedAlert from "../components/UserDeletedAlert";
+import UserUpdatedAlert from "../components/UserUpdatedAlert";
+import DeleteModal from "../components/DeleteModal";
 
 import {
   LeadingActions,
@@ -19,10 +23,13 @@ import {
 } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import "../Styles/home.css";
-import DeleteModal from "../DeleteModal";
-import { useLogout } from "../hooks/useLogout";
 
-const fetchData = async (user, setEmpData, logout) => {
+import { useLogout } from "../hooks/useLogout";
+import SpinnerLocal from "../components/SpinnerLocal";
+import { AlertContext } from "../Context/AlertContext";
+import BlogCreatedAlert from "../components/BlogCreatedAlert";
+
+const fetchData = async (user, setEmpData, logout, setLoading) => {
   try {
     const response = await axios.get("http://localhost:5000/emp-data", {
       headers: { Authorization: "Bearer " + user.token },
@@ -35,12 +42,15 @@ const fetchData = async (user, setEmpData, logout) => {
 };
 
 export default function Home() {
+  const {showAlert, setShowAlert} = useContext(AlertContext);
   const [empData, setEmpData] = useState({ emps: [] });
   const { user } = useAuthContext();
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState("false");
  
-  // const [doDelete, setDoDelete]  = useState(false);
+  const [empId, setEmpId] = useState();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const { logout } = useLogout();
   
   const isMobileScreen = useMediaQuery({
@@ -54,7 +64,7 @@ export default function Home() {
   
 
   useEffect(() => {
-    fetchData(user, setEmpData,logout);
+    fetchData(user, setEmpData,logout, setLoading);
   }, []);
 
   const employees = empData.emps;
@@ -66,21 +76,24 @@ export default function Home() {
 
   const handleDelete = async(empDbId) => {
   
+     
+      axios
+      .delete(`http://localhost:5000/emp-data/${empDbId}`, {
+        headers: { Authorization: "Bearer " + user.token },
+      })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        alert(`error: ${error}`);
+      });
+
     
-   
-    // if(doDelete){
-    //   axios
-    //   .delete(`http://localhost:5000/emp-data/${empDbId}`, {
-    //     headers: { Authorization: "Bearer " + user.token },
-    //   })
-    //   .then((response) => {
-    //     alert(`User: ${response.data.emp.name} -- has been deleted`);
-    //   })
-    //   .catch((error) => {
-    //     alert(`error: ${error}`);
-    //   });
-    // window.location.reload();
-    // }
+    window.location.reload();
+    setShowAlert({...showAlert,
+      AlertType:"userDeleted",
+      show:true
+    })
     
   };
   const navigate = useNavigate();
@@ -93,7 +106,8 @@ export default function Home() {
 
   const trailingActions = (empId) => (
     <TrailingActions>
-      <SwipeAction destructive={true} onClick={() => handleDelete(empId)}>
+      <SwipeAction  onClick={() => {setShowDeleteModal(true) 
+                    setEmpId(empId)}}>
         Delete
       </SwipeAction>
     </TrailingActions>
@@ -103,18 +117,26 @@ export default function Home() {
 
   return (
     
-    <div>
-  
- 
+    <div >
+      {/* <SpinnerLocal/> */}
+      {/* <AlertComp AlertType="danger" AlertTitle="Hi there!"/> */}
+      <div style={{display:"flex", justifyContent:"center"}}>
+      {showAlert.AlertType==="userCreated" && showAlert.show && <UserCreatedAlert  setShowAlert={setShowAlert} showAlert={showAlert}/>}
+      {showAlert.AlertType==="userDeleted" && showAlert.show && <UserDeletedAlert setShowAlert={setShowAlert} showAlert={showAlert}/>}
+      {showAlert.AlertType==="userUpdated" && showAlert.show && <UserUpdatedAlert setShowAlert={setShowAlert} showAlert={showAlert}/>}
+      {showAlert.AlertType==="blogCreated" && showAlert.show && <BlogCreatedAlert setShowAlert={setShowAlert} showAlert={showAlert}/>}
+      </div>
+
+
+
       <div style={{display:"flex", flexDirection:"column"}}>
-      {showDeleteModal && <DeleteModal setShowDeleteModal handleDelete empId />}
+      {showDeleteModal && <DeleteModal setShowDeleteModal={setShowDeleteModal} showDeleteModal={showDeleteModal} handleDelete={handleDelete} empId={empId}/> }
 
       <div style={{margin:"2% auto"}}>
         <div className="input-group m-2" style={{width: isMobileScreen?("75vw"):("35vw"), height: isMobileScreen?("2.0vh"):("")}}>
       <input type="text" className="form-control" placeholder="Search Employee" value={searchTerm} onChange={(e)=>{setSearchTerm(e.target.value)}} aria-label="employee search bar" aria-describedby="button-addon2"/>
       <button className="btn btn-secondary" type="button" id="button-addon2" ><Icon icon={ic_search}/></button>
     </div>
-      {}
     </div>
     
         
@@ -258,6 +280,7 @@ export default function Home() {
                         style={{ margin: "5px", borderRadius: "10px" }}
                         onClick={() => {
                           // handleDelete(emp._id);
+                          setEmpId(emp._id)
                           setShowDeleteModal(true)
                       
                         }}

@@ -11,16 +11,20 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import Breadcrumbs from "./Breadcrumbs";
 import { useMediaQuery } from "react-responsive";
 import { Blogs } from "./Pages/Blogs";
-
+import { AlertContext } from "./Context/AlertContext";
+import { useState } from "react";
 
 export default function App() {
+  const [showAlert, setShowAlert] = useState({AlertType:"", show: false});
   const { user } = useAuthContext();
+
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
   });
 
   return (
     <div>
+      <AlertContext.Provider value={{showAlert, setShowAlert}}>
       <Navbar currentUser />
       {user && isMobileScreen && <Breadcrumbs/>}
       <Routes>
@@ -33,6 +37,7 @@ export default function App() {
         <Route path="Form" element={ user? <Form />: <Navigate to="/"/>} />
         
       </Routes>
+      </AlertContext.Provider>
     </div>
   );
 }

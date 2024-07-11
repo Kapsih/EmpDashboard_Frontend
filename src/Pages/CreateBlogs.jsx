@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
+import { AlertContext } from "../Context/AlertContext";
+
 export default function CreateBlogs() {
+  const {showAlert, setShowAlert} = useContext(AlertContext);
   const { user } = useAuthContext();
   const isMobileScreen = useMediaQuery({
     query: "(max-width: 768px)",
   });
+  
   const [blogtitle, setBlogTitle] = useState("");
   const [blogContent, setBlogContent] = useState("");
   const navigate = useNavigate();
@@ -25,7 +29,13 @@ export default function CreateBlogs() {
       }, {
         headers: { Authorization: "Bearer " + user.token },
       })
-      .then((response) => console.log(response))
+      .then((response) => { 
+        console.log(response)
+        setShowAlert({...showAlert,
+          AlertType:"blogCreated",
+          show:true
+        })
+      })
       .catch((response) => console.log(response));
 
     navigate("/Home");

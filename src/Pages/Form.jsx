@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -6,9 +6,12 @@ import { useMediaQuery } from "react-responsive";
 import { Icon } from "react-icons-kit";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
 import { eye } from "react-icons-kit/feather/eye";
+import { AlertContext } from "../Context/AlertContext";
+
 
 
 export default function UpdateForm() {
+  const {showAlert, setShowAlert} = useContext(AlertContext);
   const { user } = useAuthContext();
   const fileRef = useRef(null);
   const isMobileScreen = useMediaQuery({
@@ -106,7 +109,13 @@ export default function UpdateForm() {
         .post("http://localhost:5000/emp-data", employee, {
           headers: { Authorization: "Bearer " + user.token },
         })
-        .then((response) => console.log(response))
+        .then((response) => {
+          console.log(response)
+          setShowAlert({...showAlert, 
+            AlertType:"userCreated",
+            show: true
+          })
+        })
         .catch((response) => console.log(response));
       navigate("/home");
     }

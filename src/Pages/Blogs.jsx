@@ -7,11 +7,10 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import Form from "react-bootstrap/Form";
-import { BsSortDown,  BsSortUp  } from "react-icons/bs";
+import { BsSortDown, BsSortUp } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
 import PaginationLocal from "../components/Pagination";
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const fetchComments = (setComments, user) => {
   axios
@@ -27,22 +26,23 @@ const fetchComments = (setComments, user) => {
 };
 
 export const Blogs = () => {
-  const commentRef = useRef(null)
+  const commentRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams({
     Author: "All",
     order: "desc",
     page: "1",
   });
-  const [searchOrder, setSearchOrder] = useState("desc")
+  const [searchOrder, setSearchOrder] = useState("desc");
   const [showModal, setShowModal] = useState(false);
   const [blogs, setBlogs] = useState([]);
-  
+
   const [paginationData, setPaginationData] = useState({
     totalPages: "1",
     currentPage: "1",
   });
   const [comments, setComments] = useState([]);
   const [currentPage, setCurrentPage] = useState("1");
+  const [activePage, setActivePage] = useState("1")  
   const [dummy, setDummy] = useState(false);
   const [blogPostId, setBlogPostId] = useState("");
   const { user } = useAuthContext();
@@ -53,7 +53,6 @@ export const Blogs = () => {
     query: "(max-width: 768px)",
   });
   dayjs.extend(relativeTime);
-
 
   useEffect(() => {
     let author = searchParams.get("Author") || "All";
@@ -73,9 +72,12 @@ export const Blogs = () => {
     }
     try {
       axios
-        .get(`http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=${limit}&page=${currentPage}`, {
-          headers: { Authorization: "Bearer " + user.token },
-        })
+        .get(
+          `http://localhost:5000/blogs/?Author=${author}&order=${order}&limit=${limit}&page=${currentPage}`,
+          {
+            headers: { Authorization: "Bearer " + user.token },
+          }
+        )
         .then((resp) => {
           setPaginationData({
             ...paginationData,
@@ -91,20 +93,23 @@ export const Blogs = () => {
     fetchComments(setComments, user);
   }, [dummy, fetchData]);
 
-
   const handleClose = () => {
     setShowModal(false);
   };
 
-
-  const handleDropdownChange = (e) => {
-    console.log(e.target.name)
+  const handleDropdownChange = async(e) => {
+    
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
       newParams.set(e.target.name, e.target.value);
+      newParams.set("page","1")
       return newParams;
     });
-    setFetchData(!fetchData)
+    setCurrentPage((prev)=>{
+      const newPage = "1";
+      return newPage;
+})
+    setFetchData(!fetchData);
   };
 
   const openCommentModal = (blogPostId) => {
@@ -112,81 +117,83 @@ export const Blogs = () => {
     setShowModal(true);
   };
   const handleOrderChange = () => {
-    setSearchOrder((searchOrder==="asc")?"desc":"asc")
+    setSearchOrder(searchOrder === "asc" ? "desc" : "asc");
     setSearchParams((prev) => {
       prev.set("order", searchOrder);
       return prev;
     });
-    setFetchData(!fetchData)
+    setFetchData(!fetchData);
   };
-  
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-     
-        <form style={{ display: "flex", flexDirection: "row", justifyContent: isMobileScreen?"center":"end", margin: isMobileScreen?"2% 0% 0% 0%":"1% 10% 0% 0%"}}>
-          <div style={{display:"flex", flexDirection:"row",  paddingTop:isMobileScreen?"15px":"10px", marginRight:isMobileScreen?"1%":"1"}}>
-            <FloatingLabel controlId="floatingSelect" label="Author" >
-            <Form.Select
-          name="Author"
-          size="sm"
-          onChange={handleDropdownChange}
-          style={{ height: isMobileScreen?"4.0vh":"", width: isMobileScreen?"30vw":"15vw", marginTop:"0.5%" }}
-          aria-label="Author selection dropdown"
-        >
-         
-          <option value="all" >All</option>
-
-          {authors.map((author, index) => {
-            return (
-            <option  key={index} value={author}>
-                {author}{" "}
-              </option>
-            );
-          })}
-        </Form.Select>
-            </FloatingLabel >
-          <FloatingLabel controlId="floatingSelect" label="Blogs per page">
-          <Form.Select
-        name="limit"
-        size="sm"
-        onChange={handleDropdownChange}
-        style={{ height:isMobileScreen?"4.0vh":"", width: isMobileScreen?"30vw":"14vw", marginTop:"0.5%", marginLeft:"3%" }}
-        aria-label="Limit selection dropdown"
+      <form
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: isMobileScreen ? "end" : "end",
+          margin: isMobileScreen ? "2% 4% 0% 0%" : "1% 10% 0% 0%",
+        }}
       >
-        <option   value="3">3</option>
-        <option   value="5">5</option>
-      </Form.Select>
-             </FloatingLabel>
-       
-          </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            paddingTop: isMobileScreen ? "15px" : "10px",
+            marginRight: isMobileScreen ? "1%" : "1",
+          }}
+        >
+          <FloatingLabel controlId="floatingSelect" label="Author">
+            <Form.Select
+              name="Author"
+              size="sm"
+              onChange={handleDropdownChange}
+              style={{
+                height: isMobileScreen ? "4.0vh" : "",
+                width: isMobileScreen ? "30vw" : "15vw",
+                marginTop: "0.5%",
+              }}
+              aria-label="Author selection dropdown"
+            >
+              <option value="all">All</option>
 
-            <div style={{display:"flex", marginLeft:isMobileScreen?"1.5%":"1%" }}>
-            <div
+              {authors.map((author, index) => {
+                return (
+                  <option key={index} value={author}>
+                    {author}{" "}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </FloatingLabel>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            marginLeft: isMobileScreen ? "1.5%" : "1%",
+          }}
+        >
+          <div
             style={{
               display: "flex",
-              flexDirection: isMobileScreen?"column":"row",
-             
-              paddingTop:"15px"
-             
+              flexDirection: isMobileScreen ? "column" : "row",
+
+              paddingTop: "15px",
             }}
           >
-      
-
-           { (searchOrder==="desc")?<BsSortUp size={50} onClick={handleOrderChange}/>:<BsSortDown size={50} onClick={handleOrderChange}/>} 
+            {searchOrder === "desc" ? (
+              <BsSortUp size={50} onClick={handleOrderChange} />
+            ) : (
+              <BsSortDown size={50} onClick={handleOrderChange} />
+            )}
           </div>
+        </div>
+      </form>
 
-        
-
-            </div>
-           
-        </form>
-      
-      
       <hr />
 
-      <div style={{ display: "flex", flexDirection: "column"}}>
-        
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <CommentModal
           showModal={showModal}
           handleClose={handleClose}
@@ -233,7 +240,7 @@ export const Blogs = () => {
                   <p
                     style={{
                       paddingLeft: "1%",
-                      paddingTop: isMobileScreen?"3%":"1%",
+                      paddingTop: isMobileScreen ? "3%" : "1%",
                       fontSize: "15px",
                     }}
                   >
@@ -242,7 +249,10 @@ export const Blogs = () => {
                   <h6 className="card-title" style={{ margin: "0 auto" }}>
                     {blog.BlogTitle}
                   </h6>
-                  <p key={blog._id} style={{ fontSize: isMobileScreen?"12px":"14px" }}>
+                  <p
+                    key={blog._id}
+                    style={{ fontSize: isMobileScreen ? "12px" : "14px" }}
+                  >
                     {dayjs(blog.createdAt).fromNow()}
                   </p>
                 </div>
@@ -271,7 +281,6 @@ export const Blogs = () => {
                     justifyContent: "end",
                   }}
                 >
-                  
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -297,11 +306,9 @@ export const Blogs = () => {
                   >
                     <TfiCommentAlt
                       id={blog._id}
-                      onClick={()=>{
+                      onClick={() => {
                         commentRef.current.click();
-                      }
-
-                      }
+                      }}
                       size={20}
                     />
                   </button>
@@ -357,26 +364,52 @@ export const Blogs = () => {
                       </div>
                     );
                   }
-                  
-                })
-                }
+                })}
             </div>
           );
         })}
       </div>
       <div
-        style={{ display: "flex", justifyContent: "center", marginTop: isMobileScreen?"5%": "2%" }}
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          alignItems: "center",
+          marginRight:"4%",
+          marginTop: isMobileScreen ? "8%" : "4%",
+          height:isMobileScreen?"":"8vh",
+          marginBottom: isMobileScreen?"8%":"1%"
+        }}
       >
+            <FloatingLabel controlId="floatingSelect" label="Blogs per page">
+          <Form.Select
+            name="limit"
+            size="sm"
+            onChange={handleDropdownChange}
+            style={{
+              height: isMobileScreen ? "4.0vh" : "",
+              width: isMobileScreen ? "35vw" : "130px",
+              marginTop: "0.5%",
+            }}
+            aria-label="Limit selection dropdown"
+          >
+            <option value="3">3</option>
+            <option value="5">5</option>
+          </Form.Select>
+        </FloatingLabel>
+
         <PaginationLocal
+          
           totalPages={paginationData.totalPages}
           currentPage={paginationData.currentPage}
-          style={{ height: "3vh" }}
           setSearchParams={setSearchParams}
           searchParams={searchParams}
           fetchData={fetchData}
           setFetchData={setFetchData}
           setCurrentPage={setCurrentPage}
+          activePage={activePage}
+          setActivePage={setActivePage}
         />
+    
       </div>
     </div>
   );
